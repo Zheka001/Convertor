@@ -1,2 +1,3 @@
 # Convector
-# Kolya Lutshii Prosto :)
+
+Kolya Lutshii Prosto :)

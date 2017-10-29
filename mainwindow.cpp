@@ -42,6 +42,17 @@ QVariant addAuthor(QSqlQuery &q, const QString &name, const QDate &birthdate)
     return q.lastInsertId();
 }
 
+QString specialProc(QString str)
+{
+    if (str.contains(";") || str.contains(",") || str.contains("\"") || str.contains("\n"))
+        return "\"" + str + "\"";
+
+    if (str.contains("\""))
+    {
+        str.replace("\"","\"\"");
+    }
+    return str;
+}
 
 
 //функция создания базы данных
@@ -117,17 +128,50 @@ void MainWindow::on_sqlView_activated(const QModelIndex &index)
 //конвертация в csv-файл
 void MainWindow::on_convertButton_clicked()
 {
-    //попробуем вычленить таблицы и заголовки
+
+    //создаем список таблиц базы данных
     QStringList tables = db.tables();
 
-    for (auto it = tables.begin(); it != tables.end(); it++)
+
+    //! необходимо выводить на экран все таблицы и выбирать среди них
+    QString myTable = tables.at(0);
+
+    //создаем csv файл с выбранной таблицей
+    QFile fileCsv(myTable + ".csv");
+    fileCsv.open(QIODevice::ReadWrite);
+    QTextStream csv(&fileCsv);
+
+    //запишем поля заголовков в файл
+    QSqlRecord fields = db.record(myTable);
+
+    QStringList str;
+    for (int i = 0; i < fields.count(); i++)
     {
-        qDebug() << *it;
+        //! необходимо реализовать обработку специальных символов
+        str << specialProc(fields.fieldName(i));
     }
+    csv << str.join(";") << endl;
 
-    QSqlRecord fields = db.record(tables.at(2));
+    //запишем строчки таблицы в файл
+    QSqlQuery q;
+    q.exec("SELECT * from " + myTable);
+    qDebug() << "Проверка на SELECT: " << q.isSelect();
+    qDebug() << "Количество строк в таблице: " << q.size();
+    qDebug() << "Текст в таблице: " << q.lastQuery();
 
-    qDebug() << fields.fieldName(0);
-    qDebug() << fields.fieldName(1);
-    qDebug() << fields.fieldName(2);
+    while(q.next())
+    {
+        str.clear();
+        for (int i = 0; i < fields.count(); i++)
+        {
+            //! необходимо поставить обработку специальных символов
+            str << specialProc(q.value(i).toString());
+        }
+        csv << str.join(';') << endl;
+    }
+    qDebug() << "Проверка кавычек: \" \"\" ";
+
+    //qDebug() << str.join(";");
+
+    fileCsv.close();
 }

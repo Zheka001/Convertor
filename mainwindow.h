@@ -37,4 +37,6 @@ QVariant addGenre(QSqlQuery &q, const QString &name);
 
 QVariant addAuthor(QSqlQuery &q, const QString &name, const QDate &birthdate);
 
+QString specialProc(QString str);
+
 #endif // MAINWINDOW_H

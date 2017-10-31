@@ -24,6 +24,10 @@ private slots:
 
     void on_convertButton_clicked();
 
+    void on_actionOpenDb_triggered();
+
+    void on_convertSqlButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

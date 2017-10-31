@@ -1,5 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "QFileDialog"
+#include <QStandardItemModel>
+#include <QItemSelectionModel>
+#include <QTreeView>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -155,10 +160,12 @@ void MainWindow::on_convertButton_clicked()
     //запишем строчки таблицы в файл
     QSqlQuery q;
     q.exec("SELECT * from " + myTable);
+
     qDebug() << "Проверка на SELECT: " << q.isSelect();
     qDebug() << "Количество строк в таблице: " << q.size();
     qDebug() << "Текст в таблице: " << q.lastQuery();
 
+    //Обрабатываем каждую строку результата запроса
     while(q.next())
     {
         str.clear();
@@ -169,9 +176,54 @@ void MainWindow::on_convertButton_clicked()
         }
         csv << str.join(';') << endl;
     }
+
     qDebug() << "Проверка кавычек: \" \"\" ";
 
     //qDebug() << str.join(";");
 
     fileCsv.close();
+}
+
+//тренируемся запоминать данные
+void MainWindow::on_actionOpenDb_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open database"),"D:\QT_project\converter\Debug\DB", tr("Databases files (*.sqlite)"));
+    QString name = fileName.mid(fileName.lastIndexOf("/") + 1);
+    name.remove(".sqlite");
+    //!должны будем открыть нужную базу
+    //!
+
+    //определяем модель
+    QStandardItemModel* sModel = new QStandardItemModel;
+    QStandardItem *rootNode = sModel->invisibleRootItem();
+
+    //создаем строчку в модели
+    QStandardItem *dbItem = new QStandardItem(name);
+    rootNode->appendRow(dbItem);
+
+    QStringList tables = db.tables();
+    //QList<QStandardItem*> tablesName;
+    //tablesName.reserve(tables.count());
+    qDebug() << tables.at(0);
+
+    for (int i = 0; i < tables.count();i++)
+    {
+        qDebug() << tables.at(i);
+        QStandardItem *c = new QStandardItem(tables.at(i));
+        //tablesName.push_back(c);
+        dbItem->appendRow(c);
+    }
+    ui->sqlView->setModel(sModel);
+    ui->sqlView->expandAll();
+
+    QItemSelectionModel *selectionModel= ui->sqlView->selectionModel();
+    connect(selectionModel, SIGNAL(selectionChanged (const QItemSelection &, const QItemSelection &)),
+                 this, SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
+
+}
+
+//код для конвертирования в sqllite
+void MainWindow::on_convertSqlButton_clicked()
+{
+
 }

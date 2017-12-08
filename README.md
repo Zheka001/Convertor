@@ -1,3 +1,3 @@
 # Convector
 
-Kolya Lutshii Prosto :)
+Vremya nastalo!

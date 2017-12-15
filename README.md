@@ -1,3 +1,3 @@
 # Convector
 
-Kolya Lutshii Prosto :)
+You have 7 days!

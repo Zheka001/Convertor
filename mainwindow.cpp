@@ -109,16 +109,66 @@ void MainWindow::on_actionOpenDb_triggered()
         ui->tableBox->addItems(tables);
     }
 
+    //скопировали из нижней, т.к. нет базы
+    QString table = ui->tableBox->currentText();
+
+    QSqlQuery q;
+    q.exec("SELECT * FROM " + table);
+
+
+    QSqlRecord fieldsRec = db.record(table);
+
+    QStringList fieldsStr;
+    for (int i = 0; i < fieldsRec.count(); i++)
+    {
+        //! необходимо реализовать обработку специальных символов
+        fieldsStr << specialProc(fieldsRec.fieldName(i));
+    }
+
+
+    QStandardItemModel* model = new QStandardItemModel(this);
+    model->setColumnCount(fieldsRec.count());
+    model->setHorizontalHeaderLabels(fieldsStr);
+
+    ui->sqlView->setModel(model);
+
+    //Обрабатываем каждую строку результата запроса
+    while(q.next())
+    {
+       QStringList rowList;
+       QList<QStandardItem*> qStandItemList;
+       for (int i = 0; i < fieldsRec.count(); i++)
+       {
+           qStandItemList.append(new QStandardItem(q.value(i).toString()));
+       }
+       model->insertRow(model->rowCount(),qStandItemList);
+    }
+
     db.close();
 }
 
-//код для конвертирования в sqllite
-void MainWindow::on_convertSqlButton_clicked()
-{
-
-}
 
 void MainWindow::on_showButton_clicked()
 {
-    QSqlDatabase
+   /*String table = ui->tableBox->currentText();
+
+   QSqlQuery q;
+   q.exec("SELECT * FROM " + table);
+
+   QStandardItemModel model;
+
+   QSqlRecord fields =
+   int number  = 0;
+   //Обрабатываем каждую строку результата запроса
+   while(q.next())
+   {
+      QStringList rowList;
+      for (int i = 0; i < fields.count(); i++)
+      {
+          rowList <<
+      }
+       model.insertRow(number, );
+   }
+
+*/
 }

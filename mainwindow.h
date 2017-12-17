@@ -23,7 +23,7 @@ private slots:
 
     void on_actionOpenDb_triggered();
 
-    void on_convertSqlButton_clicked();
+//    void on_convertSqlButton_clicked();
 
     void on_showButton_clicked();
 

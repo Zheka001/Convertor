@@ -11,7 +11,7 @@ public:
     explicit TableWindow();
 
     void clear();
-    void insertDB(QSqlDatabase& db);
+    void setData(QString str);
 private:
     explicit TableWindow(QObject* parent = 0);
 

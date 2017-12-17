@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>646</width>
-    <height>534</height>
+    <width>713</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,19 +16,19 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTreeView" name="sqlView"/>
+     <widget class="QComboBox" name="tableBox"/>
     </item>
-    <item row="0" column="1">
-     <widget class="QTreeView" name="csvView"/>
+    <item row="0" column="1" rowspan="8">
+     <widget class="QTableView" name="sqlView"/>
     </item>
     <item row="1" column="0">
-     <widget class="QPushButton" name="convertButton">
+     <widget class="QPushButton" name="showButton">
       <property name="text">
-       <string>Конвертировать в CSV</string>
+       <string>Показать таблицу</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
+    <item row="3" column="0">
      <widget class="QPushButton" name="convertSqlButton">
       <property name="text">
        <string>Конвертировать в sqlite</string>
@@ -36,9 +36,9 @@
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QPushButton" name="createButton">
+     <widget class="QPushButton" name="convertButton">
       <property name="text">
-       <string>Cоздать базу</string>
+       <string>Конвертировать в CSV</string>
       </property>
      </widget>
     </item>
@@ -58,7 +58,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>646</width>
+     <width>713</width>
      <height>21</height>
     </rect>
    </property>

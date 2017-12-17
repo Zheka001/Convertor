@@ -18,9 +18,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_createButton_clicked();
-
-    void on_sqlView_activated(const QModelIndex &index);
 
     void on_convertButton_clicked();
 
@@ -28,18 +25,20 @@ private slots:
 
     void on_convertSqlButton_clicked();
 
+    void on_showButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
-    QSqlDatabase db;
+    //QSqlDatabase db;
 };
 
-void addBook(QSqlQuery &q, const QString &title, int year, const QVariant &authorId,
-             const QVariant &genreId, int rating);
+//void addBook(QSqlQuery &q, const QString &title, int year, const QVariant &authorId,
+             //const QVariant &genreId, int rating);
 
-QVariant addGenre(QSqlQuery &q, const QString &name);
+//QVariant addGenre(QSqlQuery &q, const QString &name);
 
-QVariant addAuthor(QSqlQuery &q, const QString &name, const QDate &birthdate);
+//QVariant addAuthor(QSqlQuery &q, const QString &name, const QDate &birthdate);
 
 QString specialProc(QString str);
 

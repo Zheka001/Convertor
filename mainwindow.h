@@ -4,6 +4,16 @@
 #include <QMainWindow>
 #include <QtSql>
 #include <QSqlQuery>
+#include <QStandardItemModel>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
+#include <QRegExp>
+#include "QFileDialog"
+#include <QItemSelectionModel>
+#include <QTreeView>
+#include <QSqlRecord>
+
 
 namespace Ui {
 class MainWindow;
@@ -17,30 +27,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private slots:
-    void on_createButton_clicked();
-
-    void on_sqlView_activated(const QModelIndex &index);
-
-    void on_convertButton_clicked();
-
-    void on_actionOpenDb_triggered();
-
-    void on_convertSqlButton_clicked();
-
 private:
     Ui::MainWindow *ui;
-
-    QSqlDatabase db;
+    QStandardItemModel *csvModel;
 };
 
-void addBook(QSqlQuery &q, const QString &title, int year, const QVariant &authorId,
-             const QVariant &genreId, int rating);
-
-QVariant addGenre(QSqlQuery &q, const QString &name);
-
-QVariant addAuthor(QSqlQuery &q, const QString &name, const QDate &birthdate);
-
-QString specialProc(QString str);
+QString whatType(QString str);
+QStringList parseStr(QString str);
+QString withoutQ(QString str);
 
 #endif // MAINWINDOW_H

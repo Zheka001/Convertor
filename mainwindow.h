@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtSql>
 #include <QSqlQuery>
+#include "tableviewer.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,20 +30,19 @@ private slots:
 
     void on_actionOpencsv_triggered();
 
+    void on_convertSqlButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     QSqlDatabase db;    //база данных
+    QString name;
     bool isDatabase = false;
 };
 
-//void addBook(QSqlQuery &q, const QString &title, int year, const QVariant &authorId,
-             //const QVariant &genreId, int rating);
-
-//QVariant addGenre(QSqlQuery &q, const QString &name);
-
-//QVariant addAuthor(QSqlQuery &q, const QString &name, const QDate &birthdate);
-
 QString specialProc(QString str);
+QString whatType(QString str);
+QStringList parseStr(QString str);
+QString withoutQ(QString str);
 
 #endif // MAINWINDOW_H

@@ -35,21 +35,14 @@ QString specialProc(QString str)
 //конвертация в csv-файл
 void MainWindow::on_convertButton_clicked()
 {
-    /*
-    //создаем список таблиц базы данных
-    QStringList tables = db.tables();
-
-
-    //! необходимо выводить на экран все таблицы и выбирать среди них
-    QString myTable = tables.at(0);
-
+    QString table = ui->tableBox->currentText();
     //создаем csv файл с выбранной таблицей
-    QFile fileCsv(myTable + ".csv");
+    QFile fileCsv(table + ".csv");
     fileCsv.open(QIODevice::ReadWrite);
     QTextStream csv(&fileCsv);
 
     //запишем поля заголовков в файл
-    QSqlRecord fields = db.record(myTable);
+    QSqlRecord fields = db.record(table);
 
     QStringList str;
     for (int i = 0; i < fields.count(); i++)
@@ -61,11 +54,7 @@ void MainWindow::on_convertButton_clicked()
 
     //запишем строчки таблицы в файл
     QSqlQuery q;
-    q.exec("SELECT * from " + myTable);
-
-    qDebug() << "Проверка на SELECT: " << q.isSelect();
-    qDebug() << "Количество строк в таблице: " << q.size();
-    qDebug() << "Текст в таблице: " << q.lastQuery();
+    q.exec("SELECT * from " + table);
 
     //Обрабатываем каждую строку результата запроса
     while(q.next())
@@ -73,30 +62,24 @@ void MainWindow::on_convertButton_clicked()
         str.clear();
         for (int i = 0; i < fields.count(); i++)
         {
-            //! необходимо поставить обработку специальных символов
             str << specialProc(q.value(i).toString());
         }
         csv << str.join(';') << endl;
     }
 
-    qDebug() << "Проверка кавычек: \" \"\" ";
-
-    //qDebug() << str.join(";");
-
     fileCsv.close();
-    */
 }
 
 //тренируемся запоминать данные
 void MainWindow::on_actionOpenDb_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open database"),"D:\QT_project\converter\Debug\DB", tr("Databases files (*.sqlite)"));
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open database"), "D:\QT_project\converter\Debug\DB", tr("Databases files (*.sqlite)"));
     QString name = fileName.mid(fileName.lastIndexOf("/") + 1);
 
     //qDebug() << name;
 
     //открытие базы данных
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(name);
     db.open();
 
@@ -110,6 +93,13 @@ void MainWindow::on_actionOpenDb_triggered()
     }
 
     //скопировали из нижней, т.к. нет базы
+
+
+}
+
+
+void MainWindow::on_showButton_clicked()
+{
     QString table = ui->tableBox->currentText();
 
     QSqlQuery q;
@@ -144,31 +134,4 @@ void MainWindow::on_actionOpenDb_triggered()
        model->insertRow(model->rowCount(),qStandItemList);
     }
 
-    db.close();
-}
-
-
-void MainWindow::on_showButton_clicked()
-{
-   /*String table = ui->tableBox->currentText();
-
-   QSqlQuery q;
-   q.exec("SELECT * FROM " + table);
-
-   QStandardItemModel model;
-
-   QSqlRecord fields =
-   int number  = 0;
-   //Обрабатываем каждую строку результата запроса
-   while(q.next())
-   {
-      QStringList rowList;
-      for (int i = 0; i < fields.count(); i++)
-      {
-          rowList <<
-      }
-       model.insertRow(number, );
-   }
-
-*/
 }

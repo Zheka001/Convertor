@@ -2,14 +2,15 @@
 
 TableWindow::TableWindow()
 {
-
+    //countRows = 0;
+    //countColumns = 0;
 }
 
 void TableWindow::clear()
 {
-    countColumns = 0;
-    countRows = 0;
-    data.clear();
+   // countColumns = 0;
+    //countRows = 0;
+    //data.clear();
 }
 
 

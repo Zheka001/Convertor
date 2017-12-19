@@ -30,7 +30,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    //QSqlDatabase db;
+    QSqlDatabase db;    //база данных
 };
 
 //void addBook(QSqlQuery &q, const QString &title, int year, const QVariant &authorId,

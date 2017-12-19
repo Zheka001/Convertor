@@ -12,11 +12,12 @@ public:
 
     void clear();
     void setData(QString str);
+    //int rowCount(const int )
 private:
-    explicit TableWindow(QObject* parent = 0);
+    //explicit TableWindow(QObject* parent = 0);
 
-    int countRows;
-    int countColumns;
+    int rowCount = 0;
+    int ColumnCount= 0;
 
     QList<QStringList> data;
 };

@@ -11,6 +11,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->showButton->hide();
+    ui->tableBox->hide();
+    ui->convertButton->hide();
+    ui->convertSqlButton->hide();
 }
 
 MainWindow::~MainWindow()
@@ -219,6 +224,11 @@ void MainWindow::on_actionOpenDb_triggered()
         ui->tableBox->addItems(tables);
     }
 
+    ui->showButton->show();
+    ui->tableBox->show();
+    ui->convertButton->show();
+    ui->convertSqlButton->show();
+
     //скопировали из нижней, т.к. нет базы
 }
 
@@ -315,6 +325,11 @@ void MainWindow::on_actionOpencsv_triggered()
 
     ui->tableBox->clear();
     ui->tableBox->addItem(catName);
+
+    ui->showButton->show();
+    ui->tableBox->show();
+    ui->convertButton->show();
+    ui->convertSqlButton->show();
 }
 
 /*

@@ -19,8 +19,6 @@ public:
 
     QStandardItemModel* returnModel();
 
-
-
 private:
     QStandardItemModel *model;
 };

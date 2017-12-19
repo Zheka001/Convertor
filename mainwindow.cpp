@@ -76,10 +76,10 @@ void MainWindow::on_actionOpenDb_triggered()
 {
     isDatabase = true;
 
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open database"), "D:\QT_project\converter\Debug\DB", tr("Databases files (*.sqlite)"));
+    QString fileName = QFileDialog::getSaveFileName(this,"Open File", "", tr("Databases files (*.sqlite)"), Q_NULLPTR, QFileDialog::DontConfirmOverwrite);
     QString name = fileName.mid(fileName.lastIndexOf("/") + 1);
 
-    //qDebug() << name;
+    qDebug() << name;
 
     //открытие базы данных
     db = QSqlDatabase::addDatabase("QSQLITE");

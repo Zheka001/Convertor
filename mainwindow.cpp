@@ -36,6 +36,7 @@ QString specialProc(QString str)
 void MainWindow::on_convertButton_clicked()
 {
     QString table = ui->tableBox->currentText();
+
     //создаем csv файл с выбранной таблицей
     QFile fileCsv(table + ".csv");
     fileCsv.open(QIODevice::ReadWrite);
@@ -73,6 +74,8 @@ void MainWindow::on_convertButton_clicked()
 //тренируемся запоминать данные
 void MainWindow::on_actionOpenDb_triggered()
 {
+    isDatabase = true;
+
     QString fileName = QFileDialog::getOpenFileName(this,tr("Open database"), "D:\QT_project\converter\Debug\DB", tr("Databases files (*.sqlite)"));
     QString name = fileName.mid(fileName.lastIndexOf("/") + 1);
 
@@ -93,45 +96,63 @@ void MainWindow::on_actionOpenDb_triggered()
     }
 
     //скопировали из нижней, т.к. нет базы
-
-
 }
 
 
 void MainWindow::on_showButton_clicked()
 {
+
+
     QString table = ui->tableBox->currentText();
 
-    QSqlQuery q;
-    q.exec("SELECT * FROM " + table);
-
-
-    QSqlRecord fieldsRec = db.record(table);
-
-    QStringList fieldsStr;
-    for (int i = 0; i < fieldsRec.count(); i++)
+    if (isDatabase)
     {
-        //! необходимо реализовать обработку специальных символов
-        fieldsStr << specialProc(fieldsRec.fieldName(i));
-    }
+        QSqlQuery q;
+        q.exec("SELECT * FROM " + table);
 
 
-    QStandardItemModel* model = new QStandardItemModel(this);
-    model->setColumnCount(fieldsRec.count());
-    model->setHorizontalHeaderLabels(fieldsStr);
+        QSqlRecord fieldsRec = db.record(table);
 
-    ui->sqlView->setModel(model);
+        QStringList fieldsStr;
+        for (int i = 0; i < fieldsRec.count(); i++)
+        {
+
+            fieldsStr << specialProc(fieldsRec.fieldName(i));
+        }
+
+
+        QStandardItemModel* model = new QStandardItemModel(this);
+        model->setColumnCount(fieldsRec.count());
+        model->setHorizontalHeaderLabels(fieldsStr);
+
+        ui->sqlView->setModel(model);
 
     //Обрабатываем каждую строку результата запроса
-    while(q.next())
-    {
-       QStringList rowList;
-       QList<QStandardItem*> qStandItemList;
-       for (int i = 0; i < fieldsRec.count(); i++)
-       {
-           qStandItemList.append(new QStandardItem(q.value(i).toString()));
-       }
-       model->insertRow(model->rowCount(),qStandItemList);
+        while(q.next())
+        {
+            QStringList rowList;
+            QList<QStandardItem*> qStandItemList;
+            for (int i = 0; i < fieldsRec.count(); i++)
+            {
+                qStandItemList.append(new QStandardItem(q.value(i).toString()));
+            }
+            model->insertRow(model->rowCount(),qStandItemList);
+        }
     }
+    else
+    {
+        //случай открытия CSV файла
+    }
+}
 
+void MainWindow::on_actionOpencsv_triggered()
+{
+    isDatabase = false;
+
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open database"), "D:\QT_project\converter\Debug\DB", tr("Databases files (*.csv)"));
+    QString name = fileName.mid(fileName.lastIndexOf("/") + 1);
+
+    QString catName = name.replace(".csv", "");
+
+    ui->tableBox->addItem(catName);
 }

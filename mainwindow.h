@@ -27,10 +27,13 @@ private slots:
 
     void on_showButton_clicked();
 
+    void on_actionOpencsv_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     QSqlDatabase db;    //база данных
+    bool isDatabase = false;
 };
 
 //void addBook(QSqlQuery &q, const QString &title, int year, const QVariant &authorId,

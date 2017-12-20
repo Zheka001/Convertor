@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>713</width>
+    <height>529</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QComboBox" name="tableBox"/>
+    </item>
+    <item row="0" column="1" rowspan="8">
+     <widget class="QTableView" name="sqlView"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QPushButton" name="showButton">
+      <property name="text">
+       <string>Показать таблицу</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="convertSqlButton">
+      <property name="text">
+       <string>Конвертировать в sqlite</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="convertButton">
+      <property name="text">
+       <string>Конвертировать в CSV</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>713</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>&amp;Файл</string>
+    </property>
+    <addaction name="actionOpenDb"/>
+    <addaction name="actionOpencsv"/>
+    <addaction name="actionClose"/>
+   </widget>
+   <addaction name="menu"/>
+  </widget>
+  <action name="actionOpenDb">
+   <property name="text">
+    <string>Открыть базу данных</string>
+   </property>
+  </action>
+  <action name="actionOpencsv">
+   <property name="text">
+    <string>Открыть файл csv</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Закрыть</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

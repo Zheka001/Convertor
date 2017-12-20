@@ -24,8 +24,6 @@ private slots:
 
     void on_actionOpenDb_triggered();
 
-//    void on_convertSqlButton_clicked();
-
     void on_showButton_clicked();
 
     void on_actionOpencsv_triggered();
@@ -39,10 +37,5 @@ private:
     QString name;
     bool isDatabase = false;
 };
-
-QString specialProc(QString str);
-QString whatType(QString str);
-QStringList parseStr(QString str);
-QString withoutQ(QString str);
 
 #endif // MAINWINDOW_H

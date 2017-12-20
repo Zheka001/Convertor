@@ -23,19 +23,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//функция обработки строк
-QString specialProc(QString str)
-{
-    if (str.contains(";") || str.contains(",") || str.contains("\"") || str.contains("\n"))
-        return "\"" + str + "\"";
-
-    if (str.contains("\""))
-    {
-        str.replace("\"","\"\"");
-    }
-    return str;
-}
-
 
 //конвертация в csv-файл
 void MainWindow::on_convertButton_clicked()
@@ -54,7 +41,7 @@ void MainWindow::on_convertButton_clicked()
     for (int i = 0; i < fields.count(); i++)
     {
         //! необходимо реализовать обработку специальных символов
-        str << specialProc(fields.fieldName(i));
+        str << processingForCsvStr(fields.fieldName(i));
     }
     csv << str.join(";") << endl;
 
@@ -68,12 +55,13 @@ void MainWindow::on_convertButton_clicked()
         str.clear();
         for (int i = 0; i < fields.count(); i++)
         {
-            str << specialProc(q.value(i).toString());
+            str << processingForCsvStr(q.value(i).toString());
         }
         csv << str.join(';') << endl;
     }
 
     fileCsv.close();
+    ui->statusBar->showMessage("Файл конвертирован", 5000);
 }
 
 void MainWindow::on_convertSqlButton_clicked()
@@ -197,6 +185,7 @@ void MainWindow::on_convertSqlButton_clicked()
         db.close();
     }
     qDebug() << "Done";
+    ui->statusBar->showMessage("Файл конвертирован", 5000);
 }
 
 //тренируемся запоминать данные
@@ -227,9 +216,7 @@ void MainWindow::on_actionOpenDb_triggered()
     ui->showButton->show();
     ui->tableBox->show();
     ui->convertButton->show();
-    ui->convertSqlButton->show();
-
-    //скопировали из нижней, т.к. нет базы
+    ui->convertSqlButton->hide();
 }
 
 
@@ -244,9 +231,9 @@ void MainWindow::on_showButton_clicked()
         tv.setData(db, table);
         ui->sqlView->setModel(tv.returnModel());
     }
+    //если работаем с файлом
     else
     {
-
         tv.setData(name);
         ui->sqlView->setModel(tv.returnModel());
 
@@ -268,7 +255,7 @@ void MainWindow::on_actionOpencsv_triggered()
 
     ui->showButton->show();
     ui->tableBox->show();
-    ui->convertButton->show();
+    ui->convertButton->hide();
     ui->convertSqlButton->show();
 }
 

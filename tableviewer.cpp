@@ -22,7 +22,6 @@ void TableViewer::setData(QSqlDatabase &db, QString table)
     model->setColumnCount(fieldsRec.count());
     model->setHorizontalHeaderLabels(fieldsStr);
 
-    //MainWindow::ui->sqlView->setModel(model);
 
     //Обрабатываем каждую строку результата запроса
     while(q.next())
@@ -30,7 +29,9 @@ void TableViewer::setData(QSqlDatabase &db, QString table)
         QList<QStandardItem*> qStandItemList;
         for (int i = 0; i < fieldsRec.count(); i++)
         {
-            qStandItemList.append(new QStandardItem(q.value(i).toString()));
+            QStandardItem* item = new QStandardItem(q.value(i).toString());
+            item->setEditable(false);
+            qStandItemList.append(item);
         }
         model->insertRow(model->rowCount(),qStandItemList);
     }
@@ -63,9 +64,11 @@ void TableViewer::setData(QString name)
             line = in.readLine();
             QList<QStandardItem*> qStandItemList;
 
-            for (QString item : parseStr(line))
+            for (QString itemStr : parseStr(line))
             {
-                qStandItemList.append(new QStandardItem(item));
+                QStandardItem* item = new QStandardItem(itemStr);
+                item->setEditable(false);
+                qStandItemList.append(item);
             }
              model->insertRow(model->rowCount(),qStandItemList);
         }

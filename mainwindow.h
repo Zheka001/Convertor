@@ -1,10 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <processing.h>
+#include <convertclass.h>
 #include <QMainWindow>
 #include <QtSql>
 #include <QSqlQuery>
-#include "tableviewer.h"
+#include "QFileDialog"
+#include <QStandardItemModel>
+#include <QTreeView>
 
 namespace Ui {
 class MainWindow;
@@ -21,16 +25,12 @@ public:
 private slots:
 
     void on_convertButton_clicked();
+    void on_convertSqlButton_clicked();
 
     void on_actionOpenDb_triggered();
-
-//    void on_convertSqlButton_clicked();
-
-    void on_showButton_clicked();
-
     void on_actionOpencsv_triggered();
 
-    void on_convertSqlButton_clicked();
+    void on_showButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -40,9 +40,6 @@ private:
     bool isDatabase = false;
 };
 
-QString specialProc(QString str);
-QString whatType(QString str);
-QStringList parseStr(QString str);
-QString withoutQ(QString str);
+
 
 #endif // MAINWINDOW_H

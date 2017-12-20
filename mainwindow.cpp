@@ -11,11 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    ui->showButton->hide();
-    ui->tableBox->hide();
-    ui->convertButton->hide();
-    ui->convertSqlButton->hide();
 }
 
 MainWindow::~MainWindow()
@@ -23,27 +18,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//функция обработки строк
-QString specialProc(QString str)
-{
-    if (str.contains(";") || str.contains(",") || str.contains("\"") || str.contains("\n"))
-        return "\"" + str + "\"";
-
-    if (str.contains("\""))
-    {
-        str.replace("\"","\"\"");
-    }
-    return str;
-}
-
-
 //конвертация в csv-файл
 void MainWindow::on_convertButton_clicked()
 {
     QString table = ui->tableBox->currentText();
 
     //создаем csv файл с выбранной таблицей
-    QFile fileCsv(table + ".csv");
+    QString fileName = QFileDialog::getSaveFileName(this," Save File as", "", tr("Databases files (*.csv)"));
+    QString shortName = fileName.mid(fileName.lastIndexOf("/") + 1);
+    QFile fileCsv(shortName);
     fileCsv.open(QIODevice::ReadWrite);
     QTextStream csv(&fileCsv);
 
@@ -54,7 +37,7 @@ void MainWindow::on_convertButton_clicked()
     for (int i = 0; i < fields.count(); i++)
     {
         //! необходимо реализовать обработку специальных символов
-        str << specialProc(fields.fieldName(i));
+        str << processingForCsvStr(fields.fieldName(i));
     }
     csv << str.join(";") << endl;
 
@@ -68,7 +51,7 @@ void MainWindow::on_convertButton_clicked()
         str.clear();
         for (int i = 0; i < fields.count(); i++)
         {
-            str << specialProc(q.value(i).toString());
+            str << processingForCsvStr(q.value(i).toString());
         }
         csv << str.join(';') << endl;
     }
@@ -76,7 +59,7 @@ void MainWindow::on_convertButton_clicked()
     fileCsv.close();
 }
 
-void MainWindow::on_convertSqlButton_clicked()
+/*void MainWindow::on_convertSqlButton_clicked()
 {
     QFile file(name);
     if ( !file.open(QFile::ReadOnly | QFile::Text) )
@@ -121,9 +104,10 @@ void MainWindow::on_convertSqlButton_clicked()
         ex_in += ex_v + ")";
         ex_cr+=")";
 
-        QString table = ui->tableBox->currentText();
         db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(table + ".sqlite");
+        QString fileName = QFileDialog::getSaveFileName(nullptr," Save File as", "", tr("Databases files (*.sqlite)"));
+        QString shortName = fileName.mid(fileName.lastIndexOf("/") + 1);
+        db.setDatabaseName(shortName);
 
         //открываем базу данных
         if (!db.open())
@@ -138,10 +122,10 @@ void MainWindow::on_convertSqlButton_clicked()
         {
             qDebug() << "Already have tables!";
             QSqlRecord schema = db.record(tables.at(0));
-            if (schema.count() == parseStr(line).count() )
+            if (schema.count() == parse.count() )
             {
                 int j = 0;
-                for (QString item : parseStr(line))
+                for (QString item : parse)
                 {
                     if (item == schema.fieldName(j))
                         j++;
@@ -172,8 +156,6 @@ void MainWindow::on_convertSqlButton_clicked()
             if (!q.exec(ex_cr))
                 qDebug() << q.lastError();
 
-
-
         if (!q.prepare(ex_in))
                qDebug() << q.lastError();
         for (QString item : parse2)
@@ -187,7 +169,7 @@ void MainWindow::on_convertSqlButton_clicked()
         {
             line = in.readLine();
 
-            for (QString item : parseStr(line))
+            for (QString item : parse)
             {
                 q.addBindValue(item);
             }
@@ -195,16 +177,18 @@ void MainWindow::on_convertSqlButton_clicked()
         }
         file.close();
         db.close();
+        //db.removeDatabase("temp");
     }
     qDebug() << "Done";
 }
 
+*/
 //тренируемся запоминать данные
 void MainWindow::on_actionOpenDb_triggered()
 {
     isDatabase = true;
 
-    QString fileName = QFileDialog::getSaveFileName(this,"Open File", "", tr("Databases files (*.sqlite)"), Q_NULLPTR, QFileDialog::DontConfirmOverwrite);
+    QString fileName = QFileDialog::getOpenFileName(this,"Open File", "", tr("Databases files (*.sqlite)"), Q_NULLPTR, QFileDialog::DontConfirmOverwrite);
     name = fileName.mid(fileName.lastIndexOf("/") + 1);
 
     //qDebug() << name;
@@ -224,11 +208,6 @@ void MainWindow::on_actionOpenDb_triggered()
         ui->tableBox->addItems(tables);
     }
 
-    ui->showButton->show();
-    ui->tableBox->show();
-    ui->convertButton->show();
-    ui->convertSqlButton->show();
-
     //скопировали из нижней, т.к. нет базы
 }
 
@@ -236,11 +215,9 @@ void MainWindow::on_actionOpenDb_triggered()
 void MainWindow::on_showButton_clicked()
 {
     QString table = ui->tableBox->currentText();
-    TableViewer tv;
 
     if (isDatabase)
     {
-        /*
         QSqlQuery q;
         q.exec("SELECT * FROM " + table);
 
@@ -249,7 +226,7 @@ void MainWindow::on_showButton_clicked()
         QStringList fieldsStr;
         for (int i = 0; i < fieldsRec.count(); i++)
         {
-            fieldsStr << specialProc(fieldsRec.fieldName(i));
+            fieldsStr << processingForCsvStr(fieldsRec.fieldName(i));
         }
 
         QStandardItemModel* model = new QStandardItemModel(this);
@@ -268,13 +245,9 @@ void MainWindow::on_showButton_clicked()
             }
             model->insertRow(model->rowCount(),qStandItemList);
         }
-        */
-        tv.setData(db, table);
-        ui->sqlView->setModel(tv.returnModel());
     }
     else
     {
-        /*
         //случай открытия CSV файла
         QFile file(name);
         if ( !file.open(QFile::ReadOnly | QFile::Text) )
@@ -306,10 +279,6 @@ void MainWindow::on_showButton_clicked()
             }
             file.close();
         }
-        */
-        tv.setData(name);
-        ui->sqlView->setModel(tv.returnModel());
-
     }
 }
 
@@ -325,71 +294,15 @@ void MainWindow::on_actionOpencsv_triggered()
 
     ui->tableBox->clear();
     ui->tableBox->addItem(catName);
-
-    ui->showButton->show();
-    ui->tableBox->show();
-    ui->convertButton->show();
-    ui->convertSqlButton->show();
 }
 
-/*
-QString whatType(QString str)
+
+
+
+
+
+void MainWindow::on_convertSqlButton_clicked()
 {
-    QRegExp reg("^\\-?\\d+\\.\\d+$");
-
-    if (str.contains(reg))
-        return "REAL";
-
-    reg = QRegExp("^\\-?\\d+$");
-    if(str.contains(reg))
-        return "INTEGER";
-    return "TEXT";
+    convertclass convSql;
+    convSql.convertToSql(name);
 }
-
-QStringList parseStr(QString str)
-{
-        QStringList ret;
-        int in;
-
-        while ( (in = str.indexOf(";")) != -1)
-        {
-            QString sub_str = str;
-            sub_str.remove(in,str.size());
-            int count_Q = sub_str.count("\"");
-
-            while (count_Q % 2 != 0)
-            {
-                int in2 = str.indexOf(";",in+1);
-                if (in2 == -1)
-                {
-                    ret.append(str);
-                    return ret;
-                }
-                sub_str = str;
-                sub_str.remove(in2,str.size());
-                count_Q = sub_str.count("\"");
-                in = in2;
-            }
-
-            ret.append(withoutQ(sub_str));
-            str.remove(0,sub_str.size()+1);
-        }
-
-        ret.append(withoutQ(str));
-        return ret;
-}
-
-QString withoutQ(QString str)
-{
-    if (str[0] == "\"")
-    {
-        str.remove(0,1);
-        str.remove(str.size()-1,1);
-    }
-
-    str.replace("\"\"","\"");
-
-    return str;
-}
-
-*/

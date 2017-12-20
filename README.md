@@ -1,3 +1,3 @@
 # Convertor
 
-Ono rabotaet!!!
+You have 7 days!

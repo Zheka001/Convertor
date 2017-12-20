@@ -26,12 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    tablewindow.cpp
+    tableviewer.cpp \
+    processing.cpp \
+    converter.cpp
 
 HEADERS += \
         mainwindow.h \
-    tablewindow.h \
-    tablewindow.h
+    tableviewer.h \
+    processing.h \
+    converter.h
 
 FORMS += \
         mainwindow.ui

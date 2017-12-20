@@ -5,12 +5,7 @@ TableViewer::TableViewer()
 
 }
 
-TableViewer::~TableViewer()
-{
-    delete model;
-}
-
-void TableViewer::setData(QSqlDatabase db, QString table)
+void TableViewer::setData(QSqlDatabase &db, QString table)
 {
     QSqlQuery q;
     q.exec("SELECT * FROM " + table);
@@ -34,7 +29,6 @@ void TableViewer::setData(QSqlDatabase db, QString table)
         QList<QStandardItem*> qStandItemList;
         for (int i = 0; i < fieldsRec.count(); i++)
         {
-            //запрещаем изменение
             QStandardItem* item = new QStandardItem(q.value(i).toString());
             item->setEditable(false);
             qStandItemList.append(item);

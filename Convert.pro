@@ -27,14 +27,12 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     tableviewer.cpp \
-    processing.cpp \
-    converter.cpp
+    processing.cpp
 
 HEADERS += \
         mainwindow.h \
     tableviewer.h \
-    processing.h \
-    converter.h
+    processing.h
 
 FORMS += \
         mainwindow.ui

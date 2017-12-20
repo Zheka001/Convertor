@@ -5,7 +5,6 @@
 #include <QtSql>
 #include <QSqlQuery>
 #include "tableviewer.h"
-#include "converter.h"
 
 namespace Ui {
 class MainWindow;
@@ -34,12 +33,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-   // QSqlDatabase db;    //база данных
-   // QString name;
-   // bool isDatabase = false;
-
-   // замняем на класс
-    Converter converter;
+    QSqlDatabase db;    //база данных
+    QString name;
+    bool isDatabase = false;
 };
 
 #endif // MAINWINDOW_H

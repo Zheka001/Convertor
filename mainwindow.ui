@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Converter databases</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -68,7 +68,6 @@
     </property>
     <addaction name="actionOpenDb"/>
     <addaction name="actionOpencsv"/>
-    <addaction name="actionClose"/>
    </widget>
    <addaction name="menu"/>
   </widget>

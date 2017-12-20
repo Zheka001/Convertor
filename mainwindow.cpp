@@ -11,24 +11,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->showButton->hide();
+    ui->tableBox->hide();
+    ui->convertButton->hide();
+    ui->convertSqlButton->hide();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-//функция обработки строк
-QString specialProc(QString str)
-{
-    if (str.contains(";") || str.contains(",") || str.contains("\"") || str.contains("\n"))
-        return "\"" + str + "\"";
-
-    if (str.contains("\""))
-    {
-        str.replace("\"","\"\"");
-    }
-    return str;
 }
 
 
@@ -48,8 +40,7 @@ void MainWindow::on_convertButton_clicked()
     QStringList str;
     for (int i = 0; i < fields.count(); i++)
     {
-        //! необходимо реализовать обработку специальных символов
-        str << specialProc(fields.fieldName(i));
+        str << processingForCsvStr(fields.fieldName(i));
     }
     csv << str.join(";") << endl;
 
@@ -63,12 +54,13 @@ void MainWindow::on_convertButton_clicked()
         str.clear();
         for (int i = 0; i < fields.count(); i++)
         {
-            str << specialProc(q.value(i).toString());
+            str << processingForCsvStr(q.value(i).toString());
         }
         csv << str.join(';') << endl;
     }
 
     fileCsv.close();
+    ui->statusBar->showMessage("Файл конвертирован",5000);
 }
 
 void MainWindow::on_convertSqlButton_clicked()
@@ -192,6 +184,7 @@ void MainWindow::on_convertSqlButton_clicked()
         db.close();
     }
     qDebug() << "Done";
+    ui->statusBar->showMessage("Файл конвертирован",5000);
 }
 
 //тренируемся запоминать данные
@@ -219,77 +212,31 @@ void MainWindow::on_actionOpenDb_triggered()
         ui->tableBox->addItems(tables);
     }
 
-    //скопировали из нижней, т.к. нет базы
+    //отображаем необходимые кнопки
+    ui->showButton->show();
+    ui->tableBox->show();
+    ui->convertButton->show();
+    ui->convertSqlButton->hide();
 }
 
 
 void MainWindow::on_showButton_clicked()
 {
     QString table = ui->tableBox->currentText();
+    TableViewer tv;
 
+    //если работаем с базой
     if (isDatabase)
     {
-        QSqlQuery q;
-        q.exec("SELECT * FROM " + table);
-
-        QSqlRecord fieldsRec = db.record(table);
-
-        QStringList fieldsStr;
-        for (int i = 0; i < fieldsRec.count(); i++)
-        {
-            fieldsStr << specialProc(fieldsRec.fieldName(i));
-        }
-
-        QStandardItemModel* model = new QStandardItemModel(this);
-        model->setColumnCount(fieldsRec.count());
-        model->setHorizontalHeaderLabels(fieldsStr);
-
-        ui->sqlView->setModel(model);
-
-    //Обрабатываем каждую строку результата запроса
-        while(q.next())
-        {
-            QList<QStandardItem*> qStandItemList;
-            for (int i = 0; i < fieldsRec.count(); i++)
-            {
-                qStandItemList.append(new QStandardItem(q.value(i).toString()));
-            }
-            model->insertRow(model->rowCount(),qStandItemList);
-        }
+        tv.setData(db, table);
+        ui->sqlView->setModel(tv.returnModel());
     }
+    //если работаем с файлом
     else
     {
-        //случай открытия CSV файла
-        QFile file(name);
-        if ( !file.open(QFile::ReadOnly | QFile::Text) )
-        {
-            qDebug() << "File not exists";
-        }
-        else
-        {
-            // Создаём поток для извлечения данных из файла
-            QTextStream in(&file);
-            QString line = in.readLine();
+        tv.setData(name);
+        ui->sqlView->setModel(tv.returnModel());
 
-            QStringList title = parseStr(line);
-            QStandardItemModel* model = new QStandardItemModel(this);
-            model->setColumnCount(title.count());
-            model->setHorizontalHeaderLabels(title);
-            ui->sqlView->setModel(model);
-
-            while (!in.atEnd())
-            {
-                line = in.readLine();
-                QList<QStandardItem*> qStandItemList;
-
-                for (QString item : parseStr(line))
-                {
-                    qStandItemList.append(new QStandardItem(item));
-                }
-                 model->insertRow(model->rowCount(),qStandItemList);
-            }
-            file.close();
-        }
     }
 }
 
@@ -305,66 +252,9 @@ void MainWindow::on_actionOpencsv_triggered()
 
     ui->tableBox->clear();
     ui->tableBox->addItem(catName);
+
+    ui->showButton->show();
+    ui->tableBox->show();
+    ui->convertButton->hide();
+    ui->convertSqlButton->show();
 }
-
-
-QString whatType(QString str)
-{
-    QRegExp reg("^\\-?\\d+\\.\\d+$");
-
-    if (str.contains(reg))
-        return "REAL";
-
-    reg = QRegExp("^\\-?\\d+$");
-    if(str.contains(reg))
-        return "INTEGER";
-    return "TEXT";
-}
-
-QStringList parseStr(QString str)
-{
-        QStringList ret;
-        int in;
-
-        while ( (in = str.indexOf(";")) != -1)
-        {
-            QString sub_str = str;
-            sub_str.remove(in,str.size());
-            int count_Q = sub_str.count("\"");
-
-            while (count_Q % 2 != 0)
-            {
-                int in2 = str.indexOf(";",in+1);
-                if (in2 == -1)
-                {
-                    ret.append(str);
-                    return ret;
-                }
-                sub_str = str;
-                sub_str.remove(in2,str.size());
-                count_Q = sub_str.count("\"");
-                in = in2;
-            }
-
-            ret.append(withoutQ(sub_str));
-            str.remove(0,sub_str.size()+1);
-        }
-
-        ret.append(withoutQ(str));
-        return ret;
-}
-
-QString withoutQ(QString str)
-{
-    if (str[0] == "\"")
-    {
-        str.remove(0,1);
-        str.remove(str.size()-1,1);
-    }
-
-    str.replace("\"\"","\"");
-
-    return str;
-}
-
-

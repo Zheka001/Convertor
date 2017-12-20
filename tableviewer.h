@@ -13,7 +13,9 @@ class TableViewer
 public:
     TableViewer();
 
-    void setData(QSqlDatabase& db, QString table);
+    ~TableViewer();
+
+    void setData(QSqlDatabase db, QString table);
 
     void setData(QString name);
 

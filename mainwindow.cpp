@@ -29,6 +29,8 @@ void MainWindow::on_convertButton_clicked()
 {
     QString table = ui->tableBox->currentText();
 
+    converter.convertToCSV(table);
+    /*
     //создаем csv файл с выбранной таблицей
     QFile fileCsv(table + ".csv");
     fileCsv.open(QIODevice::ReadWrite);
@@ -61,11 +63,16 @@ void MainWindow::on_convertButton_clicked()
     }
 
     fileCsv.close();
+    */
+
     ui->statusBar->showMessage("Файл конвертирован", 5000);
 }
 
 void MainWindow::on_convertSqlButton_clicked()
 {
+
+    converter.convertToSQL();
+    /*
     QFile file(name);
     if ( !file.open(QFile::ReadOnly | QFile::Text) )
     {
@@ -185,21 +192,23 @@ void MainWindow::on_convertSqlButton_clicked()
         db.close();
     }
     qDebug() << "Done";
+
+    */
     ui->statusBar->showMessage("Файл конвертирован", 5000);
 }
 
 //тренируемся запоминать данные
 void MainWindow::on_actionOpenDb_triggered()
 {
-    isDatabase = true;
-
     QString fileName = QFileDialog::getSaveFileName(this,"Open File", "", tr("Databases files (*.sqlite)"), Q_NULLPTR, QFileDialog::DontConfirmOverwrite);
-    name = fileName.mid(fileName.lastIndexOf("/") + 1);
+    QString name = fileName.mid(fileName.lastIndexOf("/") + 1);
 
     //qDebug() << name;
 
+    converter.setDatabase(db, ui->tableBox->currentText());
+
     //открытие базы данных
-    db = QSqlDatabase::addDatabase("QSQLITE");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(name);
     db.open();
 
@@ -213,6 +222,9 @@ void MainWindow::on_actionOpenDb_triggered()
         ui->tableBox->addItems(tables);
     }
 
+    db.close();
+
+
     ui->showButton->show();
     ui->tableBox->show();
     ui->convertButton->show();
@@ -225,27 +237,29 @@ void MainWindow::on_showButton_clicked()
     QString table = ui->tableBox->currentText();
     TableViewer tv;
 
-    if (isDatabase)
+    //операция с базой данных
+    if (converter.getCondition())
     {
-
-        tv.setData(db, table);
+        tv.setData(converter.getDatabase(), table);
         ui->sqlView->setModel(tv.returnModel());
     }
     //если работаем с файлом
     else
     {
-        tv.setData(name);
+        tv.setData(converter.getFile());
         ui->sqlView->setModel(tv.returnModel());
-
     }
 }
 
 void MainWindow::on_actionOpencsv_triggered()
 {
-    isDatabase = false;
+    //isDatabase = false;
 
     QString fileName = QFileDialog::getOpenFileName(this,tr("Open database"), "E:\qt_projects\convert", tr("Databases files (*.csv)"));
-    name = fileName.mid(fileName.lastIndexOf("/") + 1);
+
+    // не факт, что нужно обрезать
+    QString name = fileName.mid(fileName.lastIndexOf("/") + 1);
+    converter.setFile(name);
 
     QString catName = name;
     catName.replace(".csv", "");
